@@ -1,0 +1,14 @@
+<!-- templates/home.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Your future content will go here -->
+
+<!-- Floating Account Button -->
+<div class="floating-account-btn">
+    <a href="{% url 'account_settings' %}" class="btn btn-primary rounded-circle">
+        <i class="bi bi-person-fill"></i>
+    </a>
+</div>
+{% endblock %}

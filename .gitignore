@@ -101,3 +101,6 @@ wheels/
 .installed.cfg
 *.egg
 MANIFEST
+
+staticfiles/
+media/

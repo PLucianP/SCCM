@@ -1,0 +1,8 @@
+django
+djangorestframework
+opencv-python
+numpy
+ultralytics
+inference-sdk
+google-cloud-vision
+torch 

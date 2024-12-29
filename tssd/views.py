@@ -1,86 +1,93 @@
 # views.py
-from django.contrib.auth.decorators import login_required
-from rest_framework import generics, status
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from django.contrib.auth import authenticate, login
 from django.shortcuts import render
-from .serializers import SignUpSerializer, UserUpdateSerializer
+from django.http import JsonResponse
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from .models import MediaFile
+import os
+from django.conf import settings
+from .models_ai.yolo_detector import YOLODetector
+from .models_ai.roboflow_detector import RoboflowDetector
+from .models_ai.google_vision_detector import GoogleVisionDetector
+from .models_ai.custom_yolo_detector import CustomYOLODetector
+
+# Initialize all detectors
+yolo_detector = YOLODetector()
+roboflow_detector = RoboflowDetector(api_key="VWw9T4je8TeGaa85n5HF")
+google_detector = GoogleVisionDetector(
+    credentials_path="/Users/lucian/Documents/Github/Facultate/wade/tssd-uni-cfe19943514d.json")
+custom_yolo_detector = CustomYOLODetector(weights_path=None, train=False)
+
+# Choose which detector to use
+DETECTOR = google_detector  # Change this to use different detectors
 
 
 def home_page(request):
     return render(request, 'home.html')
 
 
-@login_required
-def account_settings(request):
-    return render(request, 'account_settings.html')
+@api_view(['POST'])
+def upload_media(request):
+    try:
+        if 'file' not in request.FILES:
+            return Response({'error': 'No file provided'}, status=400)
 
+        file = request.FILES['file']
+        file_type = 'video' if file.content_type.startswith('video') else 'image'
 
-def signup_page(request):
-    return render(request, 'auth/signup.html')
-
-
-def login_page(request):
-    return render(request, 'auth/login.html')
-
-
-class SignUpView(generics.CreateAPIView):
-    serializer_class = SignUpSerializer
-
-    def post(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.data)
-        if serializer.is_valid():
-            user = serializer.save()
-            return Response({
-                "message": "User created successfully",
-                "user": {
-                    "id": user.id,
-                    "email": user.email
-                }
-            }, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class LoginView(APIView):
-    def post(self, request):
-        email = request.data.get('email')
-        password = request.data.get('password')
-
-        # Since we're using email as username, we pass email to the username field
-        user = authenticate(username=email, password=password)
-        if user is not None:
-            login(request, user)
-            return Response({
-                "message": "Login successful",
-                "user": {
-                    "id": user.id,
-                    "email": user.email
-                }
-            })
-        else:
-            return Response({
-                "message": "Invalid email or password"
-            }, status=status.HTTP_401_UNAUTHORIZED)
-
-
-class UserUpdateView(APIView):
-    permission_classes = [IsAuthenticated]
-    serializer_class = UserUpdateSerializer
-
-    def get(self, request):
-        serializer = self.serializer_class(request.user, context={'request': request})
-        return Response(serializer.data)
-
-    def patch(self, request):
-        serializer = self.serializer_class(
-            request.user,
-            data=request.data,
-            partial=True,
-            context={'request': request}
+        # Save the file
+        media = MediaFile.objects.create(
+            file=file,
+            file_type=file_type
         )
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        if not os.path.exists(media.file.path):
+            raise Exception('File was not saved successfully')
+
+        # Process with selected detector
+        if file_type == 'image':
+            result = DETECTOR.process_image(media.file.path)
+        else:
+            result = DETECTOR.process_video(media.file.path)
+
+        return Response({
+            'id': media.id,
+            'predictions': result
+        })
+
+    except Exception as e:
+        import traceback
+        print(traceback.format_exc())
+        return Response({
+            'error': str(e),
+            'detail': 'An error occurred while processing the file'
+        }, status=500)
+
+
+@api_view(['POST'])
+def process_live_frame(request):
+    try:
+        if 'frame' not in request.FILES:
+            return Response({'error': 'No frame provided'}, status=400)
+
+        frame = request.FILES['frame']
+        temp_path = os.path.join(settings.MEDIA_ROOT, "temp_live_frame.jpg")
+
+        with open(temp_path, 'wb+') as destination:
+            for chunk in frame.chunks():
+                destination.write(chunk)
+
+        result = DETECTOR.process_image(temp_path)
+
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
+
+        return Response(result)
+
+    except Exception as e:
+        import traceback
+        print(traceback.format_exc())
+        return Response({
+            'error': str(e),
+            'detail': 'An error occurred while processing the frame'
+        }, status=500)

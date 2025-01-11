@@ -1,12 +1,4 @@
-# Installation:
-First install the Appwrite SDK:
-```
-pip install appwrite
-```
-
-# Using API.
-Signup
-`Create account`
-Login
-`Create email password session`
-Verification
+Name of the team: WizTech
+Name of the project: SCCM (Smart Camera Carpet Measurements)
+Members:
+- Paul Lucian Pinzariu

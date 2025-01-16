@@ -1,0 +1,26 @@
+/.idea/
+
+# Logs
+carpet-measure-app/logs
+carpet-measure-app/*.log
+carpet-measure-app/npm-debug.log*
+carpet-measure-app/yarn-debug.log*
+carpet-measure-app/yarn-error.log*
+carpet-measure-app/pnpm-debug.log*
+carpet-measure-app/lerna-debug.log*
+
+carpet-measure-app/node_modules
+carpet-measure-app/dist
+carpet-measure-app/dist-ssr
+carpet-measure-app/*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

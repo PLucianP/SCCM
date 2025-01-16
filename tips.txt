@@ -1,0 +1,17 @@
+- proprietatile covoarelor
+- detectia petelor
+- geometria
+- gradul de uzura
+- adaugari manuale - mirosuri
+- restrictii de spalare (parfumata, dezinsectie)
+- covoare antice?
+- implementare google maps
+- nivelul de pret in functie de zone rezidentiale
+- nivel de pret in functie de distante
+- nivel de prioritate - urgent?
+- datele clientilor pentru livrare
+- greutatea covoarelor?
+- categorii de covoare/carpete/paturi
+- inflamabile/nocivitate/toxicitate?
+- carpet ontology
+-

@@ -118,6 +118,9 @@ const CameraMeasureApp = () => {
   const captureAndMeasure = async () => {
     if (!videoRef.current || !canvasRef.current || !model) return;
 
+    // Reset measurements before taking new ones
+    setMeasurements(null);
+
     const video = videoRef.current;
     const canvas = canvasRef.current;
     const context = canvas.getContext('2d');

@@ -14,6 +14,7 @@ The Smart Carpet Washing Service (SCW) is a comprehensive platform designed to s
 1. [Architecture Overview](#architecture-overview)
 2. [Installation](#installation)
 3. [Usage](#usage)
+4. [BlueSky Presentation](BlueSky)
 
 ## Architecture Overview
 For detailed architecture documentation, see:

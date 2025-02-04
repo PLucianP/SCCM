@@ -1,0 +1,19 @@
+{
+    "client": {
+        "name": "John Smith",
+        "phone": "0751399018",
+        "address": "Str. Example 123",
+        "observation": "Client requested fast processing"
+    },
+    "order": {
+        "number": "HQ1",
+        "product": {
+            "number": "1/2",
+            "material_type": "CARPET",
+            "length": 250,
+            "width": 300,
+            "area": 7.5,
+            "price": 900.00
+        }
+    }
+} 

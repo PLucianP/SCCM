@@ -1,0 +1,91 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Service Carpet Washing{% endblock %}</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{% static 'css/common.css' %}">
+    <link rel="stylesheet" href="{% static 'css/cards.css' %}">
+    {% block head %}{% endblock %}
+</head>
+<body class="bg-gray-100">
+    <!-- Sidebar -->
+    <div class="fixed inset-y-0 left-0 w-64 bg-blue-800 text-white flex flex-col">
+        <div class="p-4">
+            <h1 class="text-2xl font-bold">SCW</h1>
+        </div>
+        <!-- Main Navigation -->
+        <div class="flex-1 overflow-y-auto">
+            <nav class="mt-8">
+                {% if alternate_sidebar %}
+                {% if show_back_button %}
+                <a href="{% url 'service-carpet-washing:dashboard' %}" class="flex items-center px-4 py-2 hover:bg-blue-700">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Back to Dashboard
+                </a>
+                {% endif %}
+                <a href="{% url 'service-carpet-washing:documents' %}" 
+                   class="block px-4 py-2 hover:bg-blue-700 {% if request.resolver_match.url_name == 'documents' %}bg-blue-700{% endif %}">Documents</a>
+                <a href="{% url 'service-carpet-washing:workspaces' %}" 
+                   class="block px-4 py-2 hover:bg-blue-700 {% if request.resolver_match.url_name == 'workspaces' %}bg-blue-700{% endif %}">Workspaces</a>
+                {% else %}
+                <a href="{% url 'service-carpet-washing:dashboard' %}" class="block px-4 py-2 hover:bg-blue-700">Dashboard</a>
+                <a href="{% url 'service-carpet-washing:documents' %}" class="block px-4 py-2 hover:bg-blue-700">App Settings</a>
+                <a href="{% url 'service-carpet-washing:measure' %}" class="block px-4 py-2 hover:bg-blue-700">Measure</a>
+                {% endif %}
+            </nav>
+        </div>
+        
+        <!-- Profile Section -->
+        <div class="border-t border-blue-700 p-4">
+            <div class="mb-4 flex items-center">
+                <svg class="w-10 h-10 rounded-full text-blue-300 mr-3" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8c0 2.208-1.79 4-3.998 4-2.208 0-3.998-1.792-3.998-4 0-2.208 1.79-4 3.998-4 2.208 0 3.998 1.792 3.998 4z" />
+                </svg>
+                <div>
+                    <div class="font-medium">{{ user.display_name }}</div>
+                    <div class="text-sm text-blue-300">{{ user.get_role_display }}</div>
+                </div>
+            </div>
+            <div class="space-y-1">
+                <a href="{% url 'service-carpet-washing:profile' %}" class="flex items-center px-4 py-2 hover:bg-blue-700 {% if request.resolver_match.url_name == 'profile' %}bg-blue-700{% endif %}">
+                    <svg class="flex-shrink-0 w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    <span class="flex-grow">Profile</span>
+                </a>
+                <a href="{% url 'service-carpet-washing:company' %}" class="flex items-center px-4 py-2 hover:bg-blue-700 {% if request.resolver_match.url_name == 'company' %}bg-blue-700{% endif %}">
+                    <svg class="flex-shrink-0 w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                    <span class="flex-grow">Company</span>
+                </a>
+                <form method="post" action="{% url 'authentication:logout' %}?next={% url 'authentication:login' %}" class="block">
+                    {% csrf_token %}
+                    <button type="submit" class="w-full flex items-center px-4 py-2 hover:bg-blue-700">
+                        <svg class="flex-shrink-0 w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                        <span class="flex-grow text-left">Sign out</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <div class="ml-64 p-8">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.2/dist/alpine.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

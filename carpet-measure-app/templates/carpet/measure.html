@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Measure - SCW{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/measure.css' %}">
+{% endblock %}
+
+{% block content %}
+<div x-data="{ activeTab: 'camera' }" class="space-y-6">
+    <!-- Tabs -->
+    <div class="border-b border-gray-200">
+        <nav class="-mb-px flex space-x-8">
+            <button @click="activeTab = 'camera'"
+                    :class="{ 'border-blue-500 text-blue-600': activeTab === 'camera' }"
+                    class="border-transparent text-gray-500 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                Camera Measurement
+            </button>
+            <button @click="activeTab = 'history'"
+                    :class="{ 'border-blue-500 text-blue-600': activeTab === 'history' }"
+                    class="border-transparent text-gray-500 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                Measurement History
+            </button>
+        </nav>
+    </div>
+
+    <!-- Camera View -->
+    <div x-show="activeTab === 'camera'" class="space-y-4">
+        <div class="bg-white p-4 sm:p-6 rounded-lg shadow">
+            <div class="camera-container">
+                <video id="camera" autoplay playsinline></video>
+            </div>
+            <div class="mt-4 flex justify-between">
+                <button id="capture" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700" disabled>
+                    Capture
+                </button>
+                <button id="measure" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700" disabled>
+                    Calculate Dimensions
+                </button>
+            </div>
+        </div>
+
+        <!-- Modern Measurement Fields -->
+        <div class="bg-white p-4 sm:p-6 rounded-lg shadow">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Current Measurement</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div class="relative">
+                    <label class="absolute -top-2 left-2 bg-white px-1 text-xs font-medium text-gray-600">Width (cm)</label>
+                    <input type="number" id="width" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" readonly>
+                </div>
+                <div class="relative">
+                    <label class="absolute -top-2 left-2 bg-white px-1 text-xs font-medium text-gray-600">Height (cm)</label>
+                    <input type="number" id="height" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" readonly>
+                </div>
+                <div class="relative">
+                    <label class="absolute -top-2 left-2 bg-white px-1 text-xs font-medium text-gray-600">Surface Area (m²)</label>
+                    <input type="number" id="surface" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" readonly>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- History View -->
+    <div x-show="activeTab === 'history'" class="bg-white rounded-lg shadow">
+        <div class="px-4 py-5 sm:p-6">
+            <h3 class="text-lg font-medium">Measurement History</h3>
+            <div class="mt-4 grid grid-cols-1 gap-4">
+                {% for measurement in measurements %}
+                <div class="measurement-item border rounded-lg p-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium">Measurement #{{ measurement.id|truncatechars:8 }}</p>
+                            <p class="text-sm text-gray-500">{{ measurement.measured_at }}</p>
+                        </div>
+                        <div class="text-sm">
+                            <p>Width: {{ measurement.dimensions.width }}cm</p>
+                            <p>Height: {{ measurement.dimensions.height }}cm</p>
+                            <p>Surface: {{ measurement.dimensions.surface }}m²</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/measure.js' %}"></script>
+{% endblock %} 

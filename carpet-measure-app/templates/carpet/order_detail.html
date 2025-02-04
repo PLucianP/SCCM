@@ -1,0 +1,345 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Order Details - SCW{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/order_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Order #{{ order.id }}</h1>
+        <div class="flex items-center space-x-4">
+            <button onclick="OrderManager.openDocumentModal()" 
+                    class="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-150 ease-in-out">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Generate Document
+            </button>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+        <div>
+            <div class="mt-2 flex flex-wrap items-center gap-2 sm:gap-4">
+                <span class="px-3 py-1 rounded-full text-sm font-medium" 
+                      style="background-color: {{ order.workspace.color }}; color: white;">
+                    {{ order.workspace.name }}
+                </span>
+                <span class="text-gray-500">Created: {{ order.created_at }}</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-2 sm:gap-4 w-full sm:w-auto">
+            <button onclick="saveOrderChanges()" 
+                    class="flex-1 sm:flex-none px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                Save Changes
+            </button>
+            <a href="{% url 'service-carpet-washing:dashboard' %}" 
+               class="flex-1 sm:flex-none px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-center">
+                Cancel
+            </a>
+        </div>
+    </div>
+
+    <!-- Client Info Card -->
+    <div class="mb-6">
+        <div class="bg-white rounded-lg shadow-lg p-4 sm:p-6">
+            <h2 class="text-lg font-medium mb-4">Client Information</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-12 gap-4">
+                <div class="sm:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Client Name</label>
+                    <input type="text" id="clientName" value="{{ order.client.name }}" 
+                           class="form-input w-full">
+                </div>
+                <div class="sm:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                    <input type="tel" id="clientPhone" value="{{ order.client.phone }}"
+                           class="form-input w-full">
+                </div>
+                <div class="sm:col-span-3">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                    <input type="text" id="clientAddress" value="{{ order.client.address }}"
+                           class="form-input w-full">
+                </div>
+                <div class="sm:col-span-5">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Observation</label>
+                    <textarea id="orderNotes" class="form-input w-full" rows="1">{{ order.notes }}</textarea>
+                </div>
+                <div class="sm:col-span-3">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Total Area (m²)</label>
+                    <input type="number" id="totalArea" value="{{ order.total_area }}"
+                           class="form-input w-full bg-gray-50" readonly>
+                </div>
+                <div class="sm:col-span-3">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Price per m²</label>
+                    <input type="number" id="pricePerSqm" value="{{ order.price_per_sqm }}"
+                           class="form-input w-full">
+                </div>
+                <div class="sm:col-span-3">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Total Price</label>
+                    <input type="number" id="totalPrice" value="{{ order.total_price }}"
+                           class="form-input w-full bg-gray-50" readonly>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Products Section -->
+    <div class="bg-white rounded-lg shadow-lg p-4 sm:p-6">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+            <h2 class="text-lg font-medium">Products ({{ order.measured_items_count }}/{{ order.total_items_count }})</h2>
+            <button onclick="OrderManager.showAddProductModal()" 
+                    class="w-full sm:w-auto px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center justify-center">
+                <span class="mr-1">+</span> Add Product
+            </button>
+        </div>
+
+        {% if not order.price_per_sqm or order.price_per_sqm == 0 %}
+        <div class="mb-4 p-4 bg-yellow-50 border-l-4 border-yellow-400 text-yellow-700">
+            <p class="flex items-center">
+                <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+                Please set the price per square meter above before adding product dimensions.
+            </p>
+        </div>
+        {% endif %}
+
+        <!-- Individual Products -->
+        {% for item in order.items.all %}
+        <div class="product-card" data-item-id="{{ item.id }}">
+            <div class="flex justify-between items-start mb-3">
+                <div class="flex items-center gap-3">
+                    <h3 class="text-lg font-medium">{{ item.get_material_type_display }} #{{ forloop.counter }}</h3>
+                    <button class="flex items-center gap-1 px-2 py-1 text-sm text-blue-600 border border-blue-300 rounded-lg hover:bg-blue-50"
+                            onclick="scanOldQRCode('{{ item.material_type }}', {{ forloop.counter }})">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M3 4a2 2 0 012-2h2a1 1 0 010 2H5v2a1 1 0 01-2 0V4zm0 10a1 1 0 011-1h2a1 1 0 110 2H5v2a1 1 0 11-2 0v-2a2 2 0 010-.1V14zm12-4a1 1 0 01-1 1h-2a1 1 0 110-2h2V7a1 1 0 112 0v2a2 2 0 010 .1V10zm0 4a2 2 0 01-2 2h-2a1 1 0 110-2h2v-2a1 1 0 112 0v2z" />
+                        </svg>
+                        Scan Old QR
+                    </button>
+                </div>
+                <div class="flex items-center gap-2">
+                    <!-- Print Button -->
+                    <button class="text-blue-600 hover:text-blue-800 p-2" 
+                            data-tooltip="Print QR Code"
+                            onclick="printQRCode('{{ order.client.name|escapejs }}', '{{ order.client.phone|escapejs }}', '{{ order.workspace.name }}', '{{ forloop.counter }}/{{ order.items.count }}')">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v2a2 2 0 002 2h6a2 2 0 002-2v-2h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 0H7v3h6V4zm0 8H7v4h6v-4z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                    <!-- Delete Button -->
+                    <button class="text-red-600 hover:text-red-800 p-2" 
+                            data-tooltip="Delete"
+                            onclick="OrderManager.showDeleteModal('{{ item.id }}')">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 px-4 pb-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Length (cm)</label>
+                    <input type="number" name="length" value="{{ item.dimensions.width|default:'' }}"
+                           class="form-input" {% if not order.price_per_sqm %}disabled{% endif %}>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Width (cm)</label>
+                    <input type="number" name="width" value="{{ item.dimensions.height|default:'' }}"
+                           class="form-input" {% if not order.price_per_sqm %}disabled{% endif %}>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Area (m²)</label>
+                    <input type="number" name="area" value="{{ item.dimensions.surface|default:'' }}"
+                           class="form-input bg-gray-50" readonly>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Price</label>
+                    <input type="number" name="price" value="{{ item.calculated_price }}"
+                           class="form-input bg-gray-50" readonly>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- QR Code Modal -->
+<div id="qrModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50">
+    <div class="fixed inset-0 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg p-6 max-w-sm w-full">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-semibold" id="qrModalTitle">{{ order.workspace.name }}</h3>
+                <button onclick="closeQRModal()" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="text-center">
+                <p class="text-sm text-gray-600 mb-2">Order ID: {{ order.id }}</p>
+                <p class="text-sm text-gray-600 mb-4" id="qrModalProduct"></p>
+                <div id="qrCodeContainer" class="flex justify-center items-center mb-4">
+                    <!-- QR code will be inserted here -->
+                </div>
+                <p class="text-sm font-medium mb-2" id="qrModalPhone"></p>
+                <p class="text-sm font-medium mb-4" id="qrModalClient"></p>
+                <div class="flex justify-center space-x-3">
+                    <button onclick="downloadQRCode()" 
+                            class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                        Download
+                    </button>
+                    <button onclick="printQRCodeContent()" 
+                            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                        Print
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Document Template Selection Modal -->
+<div id="documentModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50">
+    <div class="fixed inset-0 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg p-6 w-full max-w-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold">Generate Document</h2>
+                <button onclick="OrderManager.closeDocumentModal()" 
+                        class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="space-y-4">
+                <p class="text-gray-600">Select a document template to generate:</p>
+                
+                <div id="documentTemplatesList" class="space-y-4">
+                    <!-- Document templates will be loaded here -->
+                </div>
+            </div>
+            
+            <div class="flex justify-end space-x-3 mt-6">
+                <button onclick="OrderManager.closeDocumentModal()"
+                        class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-md transition duration-150 ease-in-out">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Generated Document Preview Modal -->
+<div id="documentPreviewModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50">
+    <div class="fixed inset-0 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold">Document Preview</h2>
+                <button onclick="OrderManager.closePreviewModal()" 
+                        class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            
+            <div id="documentPreview" class="space-y-6">
+                <!-- Generated document will be shown here -->
+            </div>
+            
+            <div class="flex justify-end space-x-3 mt-6">
+                <button onclick="OrderManager.closePreviewModal()"
+                        class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-md transition duration-150 ease-in-out">
+                    Close
+                </button>
+                <button onclick="OrderManager.downloadDocument()"
+                        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-150 ease-in-out">
+                    Download
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteConfirmModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50">
+    <div class="fixed inset-0 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg p-6 w-full max-w-sm">
+            <div class="mb-4">
+                <h2 class="text-xl font-bold text-gray-900">Confirm Deletion</h2>
+                <p class="mt-2 text-gray-600">Are you sure you want to delete this product? This action cannot be undone.</p>
+            </div>
+            
+            <div class="flex justify-end space-x-3">
+                <button onclick="OrderManager.closeDeleteModal()" 
+                        class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-md transition duration-150 ease-in-out">
+                    Cancel
+                </button>
+                <button id="confirmDeleteBtn"
+                        class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition duration-150 ease-in-out">
+                    Delete
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Product Modal -->
+<div id="addProductModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50">
+    <div class="fixed inset-0 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold">Add New Product</h2>
+                <button onclick="OrderManager.closeAddProductModal()" 
+                        class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            
+            <form id="addProductForm" class="space-y-6">
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Material Type</label>
+                    <select id="materialType" name="material_type" required
+                           class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="CARPET">Carpet</option>
+                        <option value="BLANKET">Blanket</option>
+                        <option value="RUG">Rug</option>
+                        <option value="CURTAIN">Curtain</option>
+                        <option value="OTHER">Other</option>
+                    </select>
+                </div>
+                
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="OrderManager.closeAddProductModal()"
+                            class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-md transition duration-150 ease-in-out">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-150 ease-in-out">
+                        Add Product
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const orderId = '{{ order.id }}';
+    const clientId = '{{ order.client.id }}';
+</script>
+<script src="{% static 'js/order_detail.js' %}"></script>
+{% endblock %} 

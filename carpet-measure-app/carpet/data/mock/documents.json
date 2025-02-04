@@ -1,0 +1,67 @@
+{
+    "documents": [
+        {
+            "id": "doc_1",
+            "type": "take_over",
+            "name": "Take Over Order",
+            "template_image": "/static/images/take_over_template.png",
+            "order_fields": [
+                "order_number",
+                "client_name",
+                "client_phone",
+                "total_products"
+            ],
+            "text_sections": [
+                {
+                    "id": "terms",
+                    "content": "Pretul este de 11 lei/m2. Determinarea suprafetei se efectueaza in punctul de lucru. Plata se va face la momentul livrarii. Obilex Clean Carpet nu isi asuma responsabilitatea pentru covoarele care se pot spala doar chimic (fara apa)."
+                },
+                {
+                    "id": "consent",
+                    "content": "Clientul este de acord cu utilizarea si prelucrarea datelor sale personale in scopul indeplinirii activitatilor specifice, cu respectarea prevederilor legale."
+                }
+            ],
+            "company_fields": [
+                "name",
+                "address",
+                "working_hours",
+                "phone"
+            ],
+            "created_at": "2024-02-01T10:00:00Z",
+            "updated_at": "2024-02-01T10:00:00Z"
+        },
+        {
+            "id": "doc_2",
+            "type": "pickup",
+            "name": "Pick Up Order",
+            "template_image": "/static/images/pickup_template.png",
+            "order_fields": [
+                "order_number",
+                "client_name",
+                "client_phone",
+                "client_address",
+                "total_products"
+            ],
+            "text_sections": [
+                {
+                    "id": "delivery",
+                    "content": "Livrarea se face la adresa specificata. Va rugam sa fiti disponibil la numarul de telefon mentionat pentru confirmarea livrarii."
+                }
+            ],
+            "company_fields": [
+                "name",
+                "address",
+                "working_hours",
+                "phone"
+            ],
+            "created_at": "2024-02-01T10:00:00Z",
+            "updated_at": "2024-02-01T10:00:00Z"
+        }
+    ],
+    "company_details": {
+        "name": "Obilex Clean Carpet",
+        "address": "Str. Principala nr. 123, Bucuresti",
+        "working_hours": "Luni-Vineri: 09:00-18:00",
+        "phone": "+40 123 456 789"
+    }
+} 

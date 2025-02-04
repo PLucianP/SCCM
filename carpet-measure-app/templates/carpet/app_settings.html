@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}App Settings - SCW{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold mb-8">App Settings</h1>
+    
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+        <h2 class="text-xl font-semibold mb-4">Documents</h2>
+        <div class="space-y-4">
+            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div>
+                    <h3 class="font-medium">Document Templates</h3>
+                    <p class="text-sm text-gray-600">Manage your document templates</p>
+                </div>
+                <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                    Manage
+                </button>
+            </div>
+            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div>
+                    <h3 class="font-medium">Export Settings</h3>
+                    <p class="text-sm text-gray-600">Configure document export options</p>
+                </div>
+                <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                    Configure
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-xl font-semibold mb-4">Workspaces</h2>
+        <div class="space-y-4">
+            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div>
+                    <h3 class="font-medium">Workspace Management</h3>
+                    <p class="text-sm text-gray-600">Create and manage workspaces</p>
+                </div>
+                <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                    Manage
+                </button>
+            </div>
+            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div>
+                    <h3 class="font-medium">Access Control</h3>
+                    <p class="text-sm text-gray-600">Configure workspace permissions</p>
+                </div>
+                <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                    Configure
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,18 @@
+{
+    "clients": [
+        {
+            "id": "770e8400-e29b-41d4-a716-446655440000",
+            "name": "John Smith",
+            "phone": "123-456-7890",
+            "address": "123 Main St, City",
+            "orders": ["550e8400-e29b-41d4-a716-446655440000"]
+        },
+        {
+            "id": "770e8400-e29b-41d4-a716-446655440001",
+            "name": "Jane Doe",
+            "phone": "098-765-4321",
+            "address": "456 Oak St, Town",
+            "orders": []
+        }
+    ]
+} 

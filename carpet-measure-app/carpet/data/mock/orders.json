@@ -1,0 +1,240 @@
+{
+    "orders": [
+        {
+            "id": "550e8400-e29b-41d4-a716-446655440000",
+            "workspace": "HQ",
+            "status": "NEW",
+            "priority": "HIGH",
+            "observation": "Client requested fast processing",
+            "created_at": "2024-01-28T12:00:00Z",
+            "updated_at": "2024-01-28T12:00:00Z",
+            "client": {
+                "name": "John Smith",
+                "phone": "0751399018",
+                "address": null,
+                "total_area": 0,
+                "price_per_sqm": 120,
+                "total_price": 0
+            },
+            "total_products": 2,
+            "measured_products": 0,
+            "items": [
+                {
+                    "id": "660e8400-e29b-41d4-a716-446655440001",
+                    "material_type": "CARPET",
+                    "dimensions": null,
+                    "price": null
+                },
+                {
+                    "id": "660e8400-e29b-41d4-a716-446655440002",
+                    "material_type": "CARPET",
+                    "dimensions": null,
+                    "price": null
+                }
+            ]
+        },
+        {
+            "id": "550e8400-e29b-41d4-a716-446655440001",
+            "workspace": "TR",
+            "status": "IN_PROGRESS",
+            "priority": "MEDIUM",
+            "observation": "Call before delivery",
+            "created_at": "2024-01-27T15:30:00Z",
+            "updated_at": "2024-01-28T09:00:00Z",
+            "client": {
+                "name": "Jane Doe",
+                "phone": "0745678115",
+                "address": "Bl 25 A ap.19 Oiaga",
+                "total_area": 0,
+                "price_per_sqm": 120,
+                "total_price": 0
+            },
+            "total_products": 7,
+            "measured_products": 0,
+            "items": [
+                {
+                    "id": "660e8400-e29b-41d4-a716-446655440003",
+                    "material_type": "CARPET",
+                    "dimensions": null,
+                    "price": null
+                },
+                {
+                    "id": "660e8400-e29b-41d4-a716-446655440004",
+                    "material_type": "CARPET",
+                    "dimensions": null,
+                    "price": null
+                },
+                {
+                    "id": "660e8400-e29b-41d4-a716-446655440005",
+                    "material_type": "CARPET",
+                    "dimensions": null,
+                    "price": null
+                },
+                {
+                    "id": "660e8400-e29b-41d4-a716-446655440006",
+                    "material_type": "CARPET",
+                    "dimensions": null,
+                    "price": null
+                },
+                {
+                    "id": "660e8400-e29b-41d4-a716-446655440007",
+                    "material_type": "CARPET",
+                    "dimensions": null,
+                    "price": null
+                },
+                {
+                    "id": "660e8400-e29b-41d4-a716-446655440008",
+                    "material_type": "CARPET",
+                    "dimensions": null,
+                    "price": null
+                },
+                {
+                    "id": "660e8400-e29b-41d4-a716-446655440009",
+                    "material_type": "CARPET",
+                    "dimensions": null,
+                    "price": null
+                }
+            ]
+        },
+        {
+            "id": "550e8400-e29b-41d4-a716-446655440002",
+            "workspace": "HQ",
+            "status": "COMPLETED",
+            "priority": "LOW",
+            "observation": "Regular customer",
+            "created_at": "2024-01-26T10:15:00Z",
+            "updated_at": "2024-01-27T16:45:00Z",
+            "client": {
+                "name": "Bob Wilson",
+                "phone": "0749350461",
+                "address": null,
+                "total_area": 6.96,
+                "price_per_sqm": 120,
+                "total_price": 810.00
+            },
+            "total_products": 2,
+            "measured_products": 2,
+            "items": [
+                {
+                    "id": "660e8400-e29b-41d4-a716-446655440003",
+                    "material_type": "BLANKET",
+                    "dimensions": {
+                        "width": 180,
+                        "height": 220,
+                        "surface": 3.96
+                    },
+                    "price": 450.00
+                },
+                {
+                    "id": "660e8400-e29b-41d4-a716-446655440010",
+                    "material_type": "CARPET",
+                    "dimensions": {
+                        "width": 150,
+                        "height": 200,
+                        "surface": 3.00
+                    },
+                    "price": 360.00
+                }
+            ]
+        },
+        {
+            "id": "550e8400-e29b-41d4-a716-446655440003",
+            "workspace": "TR",
+            "status": "IN_PROGRESS",
+            "priority": "HIGH",
+            "observation": "Heavy items, need two people",
+            "created_at": "2024-01-28T08:20:00Z",
+            "updated_at": "2024-01-28T11:30:00Z",
+            "client": {
+                "name": "Alice Brown",
+                "phone": "0751399018",
+                "address": "Str. Principala nr. 123",
+                "total_area": 32.0,
+                "price_per_sqm": 120,
+                "total_price": 3840.00
+            },
+            "total_products": 2,
+            "measured_products": 2,
+            "items": [
+                {
+                    "id": "660e8400-e29b-41d4-a716-446655440004",
+                    "material_type": "CARPET",
+                    "dimensions": {
+                        "width": 400,
+                        "height": 500,
+                        "surface": 20.0
+                    },
+                    "price": 2400.00
+                },
+                {
+                    "id": "660e8400-e29b-41d4-a716-446655440011",
+                    "material_type": "CARPET",
+                    "dimensions": {
+                        "width": 300,
+                        "height": 400,
+                        "surface": 12.0
+                    },
+                    "price": 1440.00
+                }
+            ]
+        },
+        {
+            "id": "550e8400-e29b-41d4-a716-446655440004",
+            "workspace": "HQ",
+            "status": "NEW",
+            "priority": "MEDIUM",
+            "observation": "Needs express service",
+            "created_at": "2024-01-28T09:45:00Z",
+            "updated_at": "2024-01-28T09:45:00Z",
+            "client": {
+                "name": "Charlie Davis",
+                "phone": "0745678115",
+                "address": null,
+                "total_area": 0,
+                "price_per_sqm": 120,
+                "total_price": 0
+            },
+            "total_products": 7,
+            "measured_products": 0,
+            "items": [
+                {
+                    "id": "660e8400-e29b-41d4-a716-446655440005",
+                    "material_type": "CARPET",
+                    "dimensions": null,
+                    "price": null
+                }
+            ]
+        },
+        {
+            "id": "550e8400-e29b-41d4-a716-446655440005",
+            "workspace": "TR",
+            "status": "PENDING_PICKUP",
+            "priority": "HIGH",
+            "observation": "Afternoon delivery preferred",
+            "created_at": "2024-01-27T14:20:00Z",
+            "updated_at": "2024-01-28T10:15:00Z",
+            "client": {
+                "name": "Eva Martinez",
+                "phone": "0749350461",
+                "address": "Bl 25 A ap.19 Oiaga",
+                "total_area": 12.0,
+                "price_per_sqm": 150,
+                "total_price": 1800.00
+            },
+            "total_products": 2,
+            "measured_products": 2,
+            "items": [
+                {
+                    "id": "660e8400-e29b-41d4-a716-446655440006",
+                    "material_type": "CARPET",
+                    "dimensions": {
+                        "width": 300,
+                        "height": 400,
+                        "surface": 12.0
+                    },
+                    "price": 1800.00
+                }
+            ]
+        }
+    ]
+} 

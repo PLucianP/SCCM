@@ -1,0 +1,20 @@
+{
+    "name": "Service Carpet Washing",
+    "identifier": "scw",
+    "version": "1.0.0",
+    "description": "Carpet washing service management system",
+    "author": "PlucianP",
+    "ui": {
+        "main_entry": "views/dashboard.py",
+        "navigation": {
+            "icon": "assets/icons/carpet.svg",
+            "label": "Carpet Washing",
+            "order": 1
+        }
+    },
+    "mock_data": {
+        "orders": "data/mock/orders.json",
+        "measurements": "data/mock/measurements.json",
+        "clients": "data/mock/clients.json"
+    }
+} 

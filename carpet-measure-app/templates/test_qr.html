@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+
+{% block title %}Test QR Code - YHD-3200DB{% endblock %}
+
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h4>Scan Results</h4>
+                        <textarea id="scanResults" class="form-control" rows="4" readonly
+                                  placeholder="Scanned content will appear here..."></textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <button id="startScan" class="btn btn-primary me-2">Start Scanning</button>
+                        <button id="stopScan" class="btn btn-danger me-2" disabled>Stop Scanning</button>
+                        <a href="{% url 'home' %}" class="btn btn-secondary">Back to Home</a>
+                    </div>
+
+                    {% if qr_codes %}
+                        <div class="mt-4">
+                            <h4>Available QR Codes</h4>
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>QR Code</th>
+                                        <th>File Name</th>
+                                        <th>Created</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for qr in qr_codes %}
+                                        <tr>
+                                            <td>
+                                                <img src="{{ qr.url }}" alt="QR Code"
+                                                     style="width: 50px; height: 50px;">
+                                            </td>
+                                            <td>{{ qr.name }}</td>
+                                            <td>{{ qr.date }}</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-primary test-qr"
+                                                        data-qr-url="{{ qr.url }}">
+                                                    Test This Code
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 text-center" id="qrPreviewSection" style="display: none;">
+                            <h4>QR Code Preview</h4>
+                            <img id="qrPreviewImage" src="" alt="QR Code Preview" class="img-fluid mb-3"
+                                 style="max-width: 300px;">
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info mt-4">
+                            No QR codes found. Generate some QR codes first.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        let scanResults = document.getElementById('scanResults');
+        let isScanning = false;
+        let currentInput = '';
+        let lastKeyTime = Date.now();
+        const TIMEOUT = 100; // Timeout between keystrokes in milliseconds
+
+        // Listen for keyboard input when scanning is active
+        document.addEventListener('keypress', function (e) {
+            if (!isScanning) return;
+
+            const currentTime = Date.now();
+
+            // If there's been a long pause, start a new scan
+            if (currentTime - lastKeyTime > TIMEOUT && currentInput) {
+                handleCompleteScan(currentInput);
+                currentInput = '';
+            }
+
+            // Add the character to current input
+            currentInput += e.key;
+            lastKeyTime = currentTime;
+
+            // Prevent default to avoid filling other inputs
+            e.preventDefault();
+        });
+
+        // Handle enter key to complete scan
+        document.addEventListener('keydown', function (e) {
+            if (!isScanning) return;
+
+            if (e.key === 'Enter' && currentInput) {
+                handleCompleteScan(currentInput);
+                currentInput = '';
+                e.preventDefault();
+            }
+        });
+
+        function handleCompleteScan(scannedContent) {
+            const timestamp = new Date().toLocaleTimeString();
+            scanResults.value += `\n[${timestamp}] Scanned content: ${scannedContent}`;
+            scanResults.scrollTop = scanResults.scrollHeight;
+        }
+
+        document.getElementById('startScan').addEventListener('click', function () {
+            isScanning = true;
+            this.disabled = true;
+            document.getElementById('stopScan').disabled = false;
+            scanResults.value += '\nScanning started... The device is ready to scan.';
+            scanResults.scrollTop = scanResults.scrollHeight;
+            currentInput = ''; // Reset current input
+        });
+
+        document.getElementById('stopScan').addEventListener('click', function () {
+            isScanning = false;
+            this.disabled = true;
+            document.getElementById('startScan').disabled = false;
+            scanResults.value += '\nScanning stopped';
+            scanResults.scrollTop = scanResults.scrollHeight;
+            currentInput = ''; // Reset current input
+        });
+
+        // QR code preview functionality
+        document.querySelectorAll('.test-qr').forEach(button => {
+            button.addEventListener('click', function () {
+                const qrUrl = this.getAttribute('data-qr-url');
+                const previewSection = document.getElementById('qrPreviewSection');
+                const previewImage = document.getElementById('qrPreviewImage');
+                previewSection.style.display = 'block';
+                previewImage.src = qrUrl;
+                previewSection.scrollIntoView({behavior: 'smooth'});
+            });
+        });
+
+        // Clear scan results button
+        const clearButton = document.createElement('button');
+        clearButton.className = 'btn btn-secondary mt-2';
+        clearButton.textContent = 'Clear Results';
+        clearButton.onclick = function () {
+            scanResults.value = '';
+        };
+        scanResults.parentNode.appendChild(clearButton);
+    </script>
+{% endblock %}

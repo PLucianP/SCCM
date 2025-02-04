@@ -1,0 +1,269 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - SCW{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4">
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <!-- Total Orders -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-blue-500 bg-opacity-10">
+                    <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <h2 class="text-gray-600 text-sm">Total Orders</h2>
+                    <p class="text-2xl font-semibold text-gray-700" data-stat="total_orders">{{ total_orders }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- New Orders -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-green-500 bg-opacity-10">
+                    <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <h2 class="text-gray-600 text-sm">New Orders</h2>
+                    <p class="text-2xl font-semibold text-gray-700" data-stat="new_orders">{{ new_orders }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Orders -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-yellow-500 bg-opacity-10">
+                    <svg class="w-8 h-8 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <h2 class="text-gray-600 text-sm">Active Orders</h2>
+                    <p class="text-2xl font-semibold text-gray-700" data-stat="active_orders">{{ active_orders }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Clients -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-purple-500 bg-opacity-10">
+                    <svg class="w-8 h-8 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <h2 class="text-gray-600 text-sm">Total Clients</h2>
+                    <p class="text-2xl font-semibold text-gray-700">{{ total_clients }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex justify-end items-center gap-4 mb-6">
+        <button onclick="openCreateModal()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2">
+            <span class="text-xl">+</span> Add Order
+        </button>
+        <a href="{% url 'service-carpet-washing:orders' %}" class="text-blue-600 hover:text-blue-800">View All →</a>
+    </div>
+
+    <!-- Recent Orders Section -->
+    <div class="mt-4">
+        <h2 class="text-xl font-bold text-gray-900 mb-6">Recent Orders</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for order in recent_orders %}
+            <div class="order-card cursor-pointer hover:shadow-lg transition-shadow relative" 
+                 data-order-id="{{ order.id }}"
+                 data-status="{{ order.status }}"
+                 onclick="window.location.href='{% url 'service-carpet-washing:order_detail' order.id %}'">
+                <!-- Base Card with Color -->
+                <div class="order-card__base" style="--workspace-color: {{ order.workspace.color }}">
+                    <!-- Products Count -->
+                    <div class="order-card__products">
+                        <div class="order-card__products-count">
+                            {{ order.measured_items_count }}/{{ order.total_items_count }}
+                        </div>
+                        <div class="order-card__products-label">
+                            PRODUCTS
+                        </div>
+                    </div>
+
+                    <!-- Delete Button Area -->
+                    <div class="absolute -bottom-3 -right-4 w-16 h-16 flex items-center justify-center cursor-pointer z-20 group" 
+                         onclick="event.preventDefault(); event.stopPropagation(); openDeleteModal('{{ order.id }}')"
+                         data-tooltip="Delete order">
+                        <button class="w-12 h-12 flex items-center justify-center text-white hover:text-white group-hover:scale-110 group-hover:drop-shadow-xl transition-all duration-200 ease-in-out">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- White Content Section -->
+                <div class="order-card__content">
+                    <!-- Workspace Label -->
+                    <div class="order-card__workspace" style="color: {{ order.workspace.color }}">
+                        {{ order.workspace.name }}
+                    </div>
+
+                    <!-- Priority Indicator -->
+                    <div class="order-card__priority">
+                        {% if order.priority == 'HIGH' %}
+                            <div class="priority-circle priority-circle--high priority-circle-1"></div>
+                            <div class="priority-circle priority-circle--high priority-circle-2"></div>
+                            <div class="priority-circle priority-circle--high priority-circle-3"></div>
+                        {% elif order.priority == 'MEDIUM' %}
+                            <div class="priority-circle priority-circle--medium priority-circle-1"></div>
+                            <div class="priority-circle priority-circle--medium priority-circle-2"></div>
+                        {% else %}
+                            <div class="priority-circle priority-circle--low priority-circle-1"></div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Client Info -->
+                    <div class="order-card__client pl-2">
+                        <div class="order-card__client-name">{{ order.client.name }}</div>
+                        <a href="tel:{{ order.client.phone }}" class="order-card__client-phone">
+                            {{ order.client.phone }}
+                        </a>
+                        {% if order.client.address %}
+                            <div class="order-card__client-address">📍 {{ order.client.address }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Observation Text -->
+                {% if order.notes %}
+                <div class="order-card__observation">
+                    {{ order.notes }}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Create Order Modal -->
+<div id="createOrderModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-xl shadow-xl max-w-md w-full mx-auto overflow-hidden">
+        <!-- Header -->
+        <div class="bg-gray-50 px-6 py-4 border-b flex justify-between items-center">
+            <h2 class="text-xl font-semibold text-gray-800">Create New Order</h2>
+            <button onclick="closeCreateModal()" class="text-gray-500 hover:text-gray-700 transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        
+        <!-- Form Body -->
+        <div class="p-6 space-y-4">
+            <!-- Client Info Section -->
+            <div class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- Client Name -->
+                    <div class="col-span-2 sm:col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1" for="clientName">Client Name *</label>
+                        <input type="text" id="clientName" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    
+                    <!-- Phone -->
+                    <div class="col-span-2 sm:col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1" for="clientPhone">Phone *</label>
+                        <input type="tel" id="clientPhone" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                </div>
+
+                <!-- Address (Optional) -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1" for="clientAddress">
+                        Address <span class="text-gray-400 text-xs">(optional)</span>
+                    </label>
+                    <textarea id="clientAddress" rows="2"
+                              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+                </div>
+            </div>
+
+            <!-- Order Details Section -->
+            <div class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- Workspace -->
+                    <div class="col-span-2 sm:col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1" for="workspace">Workspace *</label>
+                        <select id="workspace" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            {% for workspace in workspaces %}
+                            <option value="{{ workspace.id }}">{{ workspace.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Number of Products -->
+                    <div class="col-span-2 sm:col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1" for="productCount">Number of Products *</label>
+                        <input type="number" id="productCount" min="1" value="1" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="bg-gray-50 px-6 py-4 border-t flex justify-end gap-3">
+            <button onclick="closeCreateModal()" 
+                    class="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+                Cancel
+            </button>
+            <button onclick="submitNewOrder()" 
+                    class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors">
+                Create Order
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteConfirmModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50">
+    <div class="fixed inset-0 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg p-6 w-full max-w-sm">
+            <div class="mb-4">
+                <h2 class="text-xl font-bold text-gray-900">Confirm Deletion</h2>
+                <p class="mt-2 text-gray-600">Are you sure you want to delete this order? This action cannot be undone.</p>
+            </div>
+            
+            <div class="flex justify-end space-x-3">
+                <button onclick="closeDeleteModal()" 
+                        class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-md transition duration-150 ease-in-out">
+                    Cancel
+                </button>
+                <button onclick="deleteOrder()"
+                        class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition duration-150 ease-in-out">
+                    Delete
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %} 

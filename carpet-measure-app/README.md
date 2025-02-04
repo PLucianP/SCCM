@@ -12,5 +12,4 @@
 - Create migrations:
   - `python manage.py makemigrations`
 - Make migrations:
-  - `python manage.py migrate --database=carpet_washing`
-- 
+  - `python manage.py migrate`
